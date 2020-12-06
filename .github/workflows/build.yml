@@ -16,6 +16,7 @@ jobs:
   build_linux:
     name: Linux build
     runs-on: ubuntu-20.04
+    continue-on-error: true
 
     strategy:
       matrix:
@@ -59,6 +60,7 @@ jobs:
     # build with manual setup as ubuntu.sh
     name: Linux build with manual node setup
     runs-on: ubuntu-20.04
+    continue-on-error: true
 
     strategy:
       matrix:
