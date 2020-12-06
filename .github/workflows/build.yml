@@ -15,7 +15,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   build_linux:
     name: Linux build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
