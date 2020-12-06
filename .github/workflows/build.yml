@@ -1,0 +1,56 @@
+name: Build
+on: [push, workflow_dispatch]
+
+# Defaults for every job and step in this workflow
+defaults:
+  run:
+    shell: bash # Run everything using bash
+
+jobs:
+
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+  #                                                                           #
+  #                               LINUX BUILDS                                #
+  #                                                                           #
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+  build_linux:
+    name: Linux build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V15.md
+        node-version: [
+          15.3.0,
+          15.2.1,
+          15.2.0,
+          15.1.0,
+          15.0.1,
+          15.0.0
+        ]
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'Zettlr/Zettlr'
+
+      - name: Setup NodeJS 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Retrieve tag version
+        id: ref
+        run: |
+          pkgver=$(node ./scripts/get-pkg-version.js)
+          echo ::set-output name=version::$pkgver
+
+      - name: Set up build environment
+        run: yarn install --frozen-lockfile
+
+      - name: Build the reveal.js templates
+        run: yarn reveal:build
+
+      - name: Build Linux targets
+        run: yarn release:linux
