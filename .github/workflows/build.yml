@@ -54,3 +54,51 @@ jobs:
 
       - name: Build Linux targets
         run: yarn release:linux
+
+  build_n:
+    # build with manual setup as ubuntu.sh
+    name: Linux build with manual node setup
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        # https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V15.md
+        node-version: [
+          15.3.0,
+          15.2.1,
+          15.2.0,
+          15.1.0,
+          15.0.1,
+          15.0.0
+        ]
+
+    steps:
+      - name: Setup
+        env:
+          NODE: ${{ matrix.node-version }}
+        run: |
+          echo $NODE
+
+          sudo apt update
+          sudo apt install -y build-essential curl git rpm
+
+          sudo apt install -y npm
+          sudo npm cache clean -f
+          sudo npm install -g n
+
+          n $NODE
+          node -v
+
+          curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+          sudo apt update
+          sudo apt install yarn
+
+          git clone https://github.com/Zettlr/Zettlr.git
+          cd Zettlr
+
+          yarn install --frozen-lockfile
+          yarn reveal:build
+          node -v
+          yarn package:linux-x64
+          node ./node_modules/.bin/electron-builder --linux zip --x64 --publish "never" --prepackaged out/Zettlr-linux-x64
