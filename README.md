@@ -22,6 +22,8 @@ podman run --rm -ti -v "$PWD/ubuntu.sh:/t.sh" ubuntu '/t.sh'
 
 With certain `node` versions, `electron-forge` would hang on `Packaging Application`.
 
+@david50407 and I suspect it's something to do with `electron-forge` or `electron-packager`.
+
 ### Archlinux
 
 - Arch [Node.js](https://wiki.archlinux.org/index.php/Node.js) wiki.
@@ -39,3 +41,18 @@ With certain `node` versions, `electron-forge` would hang on `Packaging Applicat
   - `n 15.2.0` bad
   - `n 15.2.1` bad
   - `n 15.3.0` bad
+
+## suggestion
+
+Use [Node.js LTS release](https://nodejs.org/en/about/releases/).
+
+Current active LTS is v14 Fermium (2020-10-27 - 2021-10-19).
+
+```bash
+# archlinux
+pacman -S nodejs-lts-fermium
+
+# ubuntu/debian
+curl -sL https://deb.nodesource.com/setup_lts.x | bash -
+apt install -y nodejs
+```
